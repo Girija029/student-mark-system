@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cumulative Report</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: #f8f5f5;
+            padding: 20px;
+        }
+
+        /* HEADER WITH LOGO + TEXT */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header img {
+            width: 70px;
+            height: auto;
+        }
+
+        .header-text h2 {
+            margin: 0;
+            font-size: 22px;
+            text-transform: uppercase;
+        }
+
+        .header-text h4 {
+            margin: 3px 0;
+            font-size: 16px;
+        }
+
+        .header-text p {
+            margin: 3px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .fail-text {
+            color: red;
+            font-weight: bold;
+        }
+
+        .controls {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-family: sans-serif;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        @media print {
+            .controls {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-text">
+            <h2>KINGS COLLEGE OF ENGINEERING</h2>
+            <h4>Department of Computer Science and Engineering</h4>
+            <p>Academic Year 2024-2025 / Even Semester<br>{{ exam }}</p>
+        </div>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details-row">
+        <span>Year/Branch/Section: {{ class_name }}</span>
+        <span>Strength: {{ report_data|length }}</span>
+    </div>
+
+    <!-- TABLE -->
+    <table>
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Roll.No</th>
+                <th style="text-align: left;">Student Name</th>
+
+                {% for sub in subjects %}
+                <th>{{ sub }}</th>
+                {% endfor %}
+
+                {% if not subjects %}
+                <th>No Subjects Mapped</th>
+                {% endif %}
+
+                <th>No. of<br>subjects<br>failed</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in report_data %}
+            <tr>
+                <td>{{ row.sno }}</td>
+                <td>{{ row.roll_no }}</td>
+                <td style="text-align: left;">{{ row.name }}</td>
+
+                {% for mark in row.marks %}
+                <td class="{% if mark == 'AB' or (mark != '-' and mark|int < 25) %}fail-text{% endif %}">
+                    {{ mark }}
+                </td>
+                {% endfor %}
+
+                {% if not subjects %}
+                <td>-</td>
+                {% endif %}
+
+                <td class="{% if row.failed > 0 %}fail-text{% endif %}">
+                    {{ row.failed }}
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3"><b>Subject Pass %</b></td>
+            
+                {% for sub in subjects %}
+                <td><b>{{ subject_percentage[sub] }}%</b></td>
+                {% endfor %}
+            
+                <td>-</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- BUTTONS -->
+    <div class="controls">
+        <button class="btn btn-primary" onclick="window.print()">💻 Print /Download Report</button>
+        <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+    
+
+</body>
+
+</html>
